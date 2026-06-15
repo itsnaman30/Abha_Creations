@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-brand-cream: #fffaf5;
+  --color-brand-beige: #ebdcd0;
+  --color-brand-rose: #9c4a3f;
+  --color-brand-sage: #5b694c;
+  --color-brand-dark: #3a2a25;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fffaf5;
+  color: #3a2a25;
+}

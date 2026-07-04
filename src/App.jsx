@@ -19,6 +19,11 @@ const defaultCollections = [
   },
 ];
 
+const adminCredentials = {
+  email: import.meta.env.VITE_ADMIN_EMAIL?.trim() || '',
+  password: import.meta.env.VITE_ADMIN_PASSWORD?.trim() || '',
+};
+
 export default function App() {
   const [collections, setCollections] = useState(defaultCollections);
   const [viewAuth, setViewAuth] = useState(false);
@@ -49,7 +54,12 @@ export default function App() {
     }
 
     if (authRole === 'admin') {
-      if (email === 'admin@abha.com' && password === 'admin123') {
+      if (!adminCredentials.email || !adminCredentials.password) {
+        setErrorMessage('Admin access is not configured yet. Please contact the business owner to set the admin login credentials.');
+        return;
+      }
+
+      if (email === adminCredentials.email && password === adminCredentials.password) {
         setIsLoggedIn(true);
         setIsAdmin(true);
         setUserName('Admin');
@@ -58,7 +68,7 @@ export default function App() {
         resetForm();
         return;
       }
-      setErrorMessage('Invalid admin credentials. Use the business owner login.');
+      setErrorMessage('Invalid admin credentials. Please use the business owner account.');
       return;
     }
 
@@ -185,7 +195,7 @@ export default function App() {
               </div>
               {authRole === 'admin' && (
                 <p className="text-[11px] text-gray-500 mt-1">
-                  Admin = business owner. Login to edit the landing page images.
+                  Admin access uses the business owner&apos;s own email and password.
                 </p>
               )}
 
@@ -235,8 +245,7 @@ export default function App() {
                     </button>
                     {authMode === 'login' && authRole === 'admin' && (
                       <p className="text-[11px] text-gray-500">
-                        Admin login: <span className="font-semibold text-brand-dark">admin@abha.com</span> /{' '}
-                        <span className="font-semibold text-brand-dark">admin123</span>
+                        Use the business owner&apos;s configured admin credentials.
                       </p>
                     )}
                     {authMode === 'login' && authRole === 'customer' && (
@@ -508,20 +517,32 @@ export default function App() {
         {/* --- TESTIMONIALS --- */}
         <section className="w-full py-4">
           <h3 className="text-xl font-serif text-center text-brand-dark tracking-wide mb-8">Loved by Our Customers</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {[
-              { name: "Neha S.", text: "The bedsheet quality is amazing! So soft and the print is beautiful.", img: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=150&q=80" },
-              { name: "Priyanka M.", text: "Comforter is lightweight yet so warm. Perfect for winters!", img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&w=150&q=80" },
-              { name: "Anjali K.", text: "Super fast delivery and such cute packing. Loved it! 💕", img: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=150&q=80" }
+              {
+                name: 'Shreya Mehta ',
+                text: 'I recently purchased three bedsheets from Abha Creations and was truly impressed by the quality. The fabric is soft, comfortable, and premium, and the 3D-look bedsheets for my kids\' room were my favourite.',
+                featured: true,
+              },
+              { name: 'Neha S.', text: 'The bedsheet quality is amazing! So soft and the print is beautiful.' },
+              { name: 'Priyanka M.', text: 'Comforter is lightweight yet so warm. Perfect for winters!' },
+              { name: 'Anjali K.', text: 'Super fast delivery and such cute packing. Loved it! 💕' },
             ].map((user, i) => (
-              <div key={i} className="bg-white border border-brand-beige/50 p-5 rounded-2xl shadow-sm flex flex-col justify-between items-start">
+              <div
+                key={i}
+                className={`border p-5 rounded-2xl shadow-sm flex flex-col justify-between items-start ${
+                  user.featured
+                    ? 'bg-gradient-to-br from-brand-cream to-white border-brand-rose ring-2 ring-brand-rose/30 shadow-md'
+                    : 'bg-white border-brand-beige/50'
+                }`}
+              >
                 <div>
                   <div className="text-amber-400 text-xs tracking-tighter mb-3">★★★★★</div>
                   <p className="text-gray-600 text-xs italic leading-relaxed">"{user.text}"</p>
                 </div>
                 <div className="flex items-center gap-3 mt-4 pt-2 border-t border-brand-beige/30 w-full">
-                  <div className="w-7 h-7 rounded-full overflow-hidden bg-brand-cream">
-                    <img src={user.img} alt={user.name} className="w-full h-full object-cover" />
+                  <div className="w-7 h-7 rounded-full overflow-hidden bg-brand-cream flex items-center justify-center text-[10px] font-semibold text-brand-dark">
+                    {user.name.charAt(0)}
                   </div>
                   <span className="text-xs font-semibold text-brand-dark">— {user.name}</span>
                 </div>
